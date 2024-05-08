@@ -1,4 +1,10 @@
-
+import timeit
+from matplotlib import pyplot
+def linear(arr, n):
+    i = 0;
+    for i, x in enumerate(arr):
+        if x  == n: return i
+    return None
 def binsearch(nums, n):
     lo, hi = 0, len(nums)
     while hi > lo:
@@ -32,4 +38,27 @@ if __name__ == '__main__':
     )
     for nums, n, exp in cases:
         assert binsearch(nums, n) == exp
+        assert linear(nums, n) == exp
     print('ok')
+
+if __name__ == '__main__':
+    num = 1 << 14
+    ran =  num
+    arr = []
+    i = 0
+    while i < num:
+       arr.append(i) 
+       i+=1
+       
+    bintiming = []
+    lineartiming = []
+
+    for x in range(0, ran):
+        bintiming.append(timeit.timeit(lambda: binsearch(arr, x), number=3))
+        lineartiming.append(timeit.timeit(lambda: linear(arr, x), number=3))
+
+    pyplot.title("binary search vs linear search")
+    pyplot.xlabel("number of items in array")
+    pyplot.ylabel("time spent")
+    pyplot.plot(arr, bintiming, lineartiming)
+    pyplot.show(block=True)
