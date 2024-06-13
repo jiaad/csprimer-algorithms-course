@@ -53,17 +53,18 @@ if __name__ == "__main__":
     graph_dfs.add_edge("E", "F")
     print(graph_dfs.adjacency)
 
-    def travers_graph_dfs(gr):
+    def travers_graph_dfs(graph):
         visited = set()
          
-        def dfs(keys):
-            if not len(keys): return
-            for key in keys:
-                if not key in visited:
-                    print(key, end="->")
-                    visited.add(key)
-                    dfs(gr.adjacency[key])
+        keys = graph.adjacency
+        def dfs(vrtx):
+            if not len(vrtx): return
+            print(vrtx, end="->")
+            visited.add(vrtx)
+            for vrtx in keys[vrtx]:
+                if not vrtx in visited:
+                    dfs(vrtx)
 
-        dfs(gr.adjacency)
+        dfs("A")
     travers_graph_dfs(graph_dfs)
 
