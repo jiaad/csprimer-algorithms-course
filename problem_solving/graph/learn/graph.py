@@ -26,6 +26,50 @@ class Graph:
         del self.adjacency[vrtx] 
 
 
+    def neighbors(self, vrtx):
+        keys = self.adjacency
+        return keys.get(vrtx, []) 
+
+    def dfs_rec(self, start_vrtx):
+        visited, res = set(), []
+        def dfs(vrtx):
+            if not vrtx: return
+            res.append(vrtx)
+            visited.add(vrtx)
+            
+            for key in self.neighbors(vrtx):
+                if not key in visited:
+                    dfs(key)
+            return res
+
+        return dfs(start_vrtx)
+        
+    def dfs_itter(self, start_vrtx):
+        visited, res, stack = set(), [], [start_vrtx]
+        while len(stack):
+            vertex = stack.pop()
+            if vertex in visited: continue
+            visited.add(vertex)
+            res.append(vertex)
+            for v in self.neighbors(vertex):
+                stack.append(v)
+        return res
+        
+    def bfs(self, start_vrtx):
+        visited, res, q = set(), [], [start_vrtx]
+
+        while len(q):
+            vrtx = q.pop(0)
+            if vrtx in visited: continue
+            res.append(vrtx)
+            visited.add(vrtx)
+            for x in self.neighbors(vrtx):
+                q.append(x)
+
+        return res
+
+
+
 if __name__ == "__main__":
     gr = Graph()
     gr.add_vertex("paris")
@@ -36,35 +80,27 @@ if __name__ == "__main__":
     gr.add_edge("paris", "milan")
     gr.add_edge("london", "milan")
 
-    graph_dfs = Graph()
-    graph_dfs.add_vertex("A")
-    graph_dfs.add_vertex("B")
-    graph_dfs.add_vertex("C")
-    graph_dfs.add_vertex("D")
-    graph_dfs.add_vertex("E")
-    graph_dfs.add_vertex("F")
+    graph = Graph()
+    graph.add_vertex("A")
+    graph.add_vertex("B")
+    graph.add_vertex("C")
+    graph.add_vertex("D")
+    graph.add_vertex("E")
+    graph.add_vertex("F")
 
-    graph_dfs.add_edge("A", "B")
-    graph_dfs.add_edge("A", "C")
-    graph_dfs.add_edge("B", "D")
-    graph_dfs.add_edge("C", "E")
-    graph_dfs.add_edge("D", "E")
-    graph_dfs.add_edge("D", "F")
-    graph_dfs.add_edge("E", "F")
-    print(graph_dfs.adjacency)
+    graph.add_edge("A", "B")
+    graph.add_edge("A", "C")
+    graph.add_edge("B", "D")
+    graph.add_edge("C", "E")
+    graph.add_edge("D", "E")
+    graph.add_edge("D", "F")
+    graph.add_edge("E", "F")
+    print(graph.dfs_rec("A"))
+    print(graph.dfs_itter("A"))
+    print(graph.bfs("A"))
 
-    def travers_graph_dfs(graph):
-        visited = set()
-         
-        keys = graph.adjacency
-        def dfs(vrtx):
-            if not len(vrtx): return
-            print(vrtx, end="->")
-            visited.add(vrtx)
-            for vrtx in keys[vrtx]:
-                if not vrtx in visited:
-                    dfs(vrtx)
 
-        dfs("A")
-    travers_graph_dfs(graph_dfs)
-
+    iife = lambda fn: fn()
+    @iife
+    def p():
+        print("hellllooooo")
