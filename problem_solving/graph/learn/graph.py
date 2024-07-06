@@ -8,10 +8,14 @@ class Graph:
             self.adjacency[vrtx_name] = []
 
     def add_edge(self, key1, key2):
-        if key1 in self.adjacency:
-            self.adjacency[key1].append(key2)
-        if key2 in self.adjacency:
-            self.adjacency[key2].append(key1)
+        def rec(key1, key2, depth):
+            if key1 in self.adjacency:
+                self.adjacency[key1].append(key2)
+            #if depth == 0:
+            #    rec(key2, key1, 1)
+            if key2 in self.adjacency:
+                self.adjacency[key2].append(key1)
+        return rec(key1, key2, 0)
     def remove_edge(self, key1, key2):
         if key1 in self.adjacency:
             filtered = filter(lambda x: x != key2, self.adjacency[key1])
