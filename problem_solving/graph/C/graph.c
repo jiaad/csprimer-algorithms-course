@@ -1,21 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "graph.h"
 
-#define MAXV 100
+int processed[MAXV + 1];
+int discovered[MAXV + 1];
+int parent[MAXV + 1];
 
-typedef struct edgenode {
-  int y;
-  int weight;
-  struct edgenode *next;
-} edgenode;
+int entry_time[MAXV + 1];
+int exit_time[MAXV + 1];
+int time;
 
-typedef struct graph {
-  edgenode *edges[MAXV + 1]; /* adjacency info */
-  int degree[MAXV + 1];      /* out dgree of each vertex */
-  int nvertices;
-  int nedges;   /* number of edges in the graph */
-  int directed; /* is directed */
-} graph, *graph_ptr;
+int finished = 0;
 
 void graph_init(graph_ptr g, int directed) {
   int i; // counter
@@ -33,12 +26,18 @@ void graph_init(graph_ptr g, int directed) {
   }
 }
 
-void insert_edge(graph_ptr g, int x, int y, int directed) {
-  edgenode *p;
+edgenode_ptr edgenode_init() {
+  edgenode_ptr p;
   p = malloc(sizeof(edgenode));
+  return p;
+}
+
+void insert_edge(graph_ptr g, int x, int y, int directed) {
+  edgenode_ptr p;
+  p = edgenode_init();
 
   p->weight = 0;
-  p->y = y;
+  p->val = y;
   p->next = g->edges[x];
 
   g->edges[x] = p;
@@ -76,7 +75,7 @@ void print_graph(graph_ptr g) {
     printf("%d: ", i);
     p = g->edges[i];
     while (p != NULL) {
-      printf(" %d", p->y);
+      printf(" %d", p->val);
       p = p->next;
     }
     printf(" degree: %d", g->degree[i]);
@@ -84,11 +83,69 @@ void print_graph(graph_ptr g) {
   }
 }
 
+void init_graph_search(graph_ptr g) {
+  int i;
 
-void create_small_graph(graph_ptr g){
+  time = 0;
+
+  for (i = 0; i <= g->nvertices; i++) {
+    processed[i] = FALSE;
+    discovered[i] = FALSE;
+    parent[i] = -1;
+  }
+}
+
+
+void bfs(graph_ptr g, int start) {
+  queue q;
+  // int v;
+  edgenode_ptr neighbours;
+
+  init_queue(&q);
+  enqueue(&q, start);
+  discovered[start] = TRUE;
+
+  /**
+  *
+  * while len(q):
+  *   vrtx = q.pop(0)
+  *   discovered.add(vrtx)
+  *   for x in grah.adjacdencylsit[vrtx]:
+  *     if x not in processed:
+  *       process(vrtx, x)
+  *     if x not in discovered:
+  *       discovered.add(x)
+  *       q.append(x)
+  **/
+  while (!empty_queue(&q)) {
+    int vrtx = dequeue(&q);
+    printf("%d", vrtx);
+    printf(" -> ");
+    processed_vertex_early(vrtx);
+    processed[vrtx] = TRUE;// not compulsary to mark it processed here, we could do that at the end of the outer loop
+    neighbours = g->edges[vrtx]; // get the list of the vrtx connections
+    // for neighbour in graph.adjacency_list[vrtx]
+    while (neighbours != NULL) {
+      int neighbour = neighbours->val;
+      if ((!processed[neighbour]) || g->directed) {
+        process_edge(vrtx, neighbour);
+      }
+
+      if (!discovered[neighbour]) {
+        enqueue(&q, neighbour);
+        discovered[neighbour] = vrtx;
+        parent[neighbour] = vrtx;
+      }
+      neighbours = neighbours->next;
+    }
+    process_vertex_late(vrtx);
+  }
+}
+
+void create_small_graph(graph_ptr g) {
   int m;
   graph_init(g, 0);
-  g->nvertices = 10;
+  g->nvertices = 20;
 
   insert_edge(g, 1, 2, g->directed);
   insert_edge(g, 1, 3, g->directed);
@@ -97,16 +154,15 @@ void create_small_graph(graph_ptr g){
   insert_edge(g, 4, 1, g->directed);
   insert_edge(g, 4, 2, g->directed);
   insert_edge(g, 5, 2, g->directed);
+  insert_edge(g, 5, 10, g->directed);
+  insert_edge(g, 10, 20, g->directed);
 }
 
-int main(void) {
-  graph G;
-  // G = malloc(sizeof(graph));
-  // graph_init(&G, 0);
-  // rintf("nv: %d - ne: %d - nd: %d\n", G.nvertices, G.nedges, G.directed);
-  //  read_graph(&G, 1);
-  create_small_graph(&G);
-  print_graph(&G);
-
-  return 0;
+void find_path(int start, int end, int parents[]){
+  if((start == end) || (end == -1)){
+    printf("\n%d", start);
+  }else {
+    find_path(start, parents[end], parents);
+    printf(" %d", end);
+  }
 }
