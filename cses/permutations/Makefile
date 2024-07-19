@@ -1,0 +1,10 @@
+	diff <(cat 1.out) <(cat 1.in | ./a.out);
+	diff <(cat 2.out) <(cat 2.in | ./a.out);
+	diff <(cat 3.out) <(cat 3.in | ./a.out);
+	diff <(cat 4.out) <(cat 4.in | ./a.out);
+	diff <(cat 5.out) <(cat 5.in | ./a.out);
+	diff <(cat 6.out) <(cat 6.in | ./a.out);
+	diff <(cat 7.out) <(cat 7.in | ./a.out);
+	diff <(cat 13.out) <(cat 13.in | ./a.out);
+	diff <(cat 14.out) <(cat 14.in | ./a.out);
+	diff <(cat 16.out) <(cat 16.in | ./a.out);
